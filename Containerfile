@@ -4,10 +4,9 @@ RUN curl https://download.opensuse.org/repositories/home:/jejb1:/TPM/Fedora_29/h
 && yum -y install openssl ibmswtpm2 ibmtss openssl_tpm2_engine openssl-pkcs11-export \
 && yum clean all
 
-ADD entrypoint.sh /
-ADD openssl_tpm2.cnf /
-
+ADD entrypoint.sh /home
+ADD openssl_tpm2.cnf /home
 
 EXPOSE 8443
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/home/entrypoint.sh"]
 CMD ["serve"]

@@ -1,0 +1,35 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+  name: openssl-tpm2
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: openssl-tpm2
+  template:
+    metadata:
+      labels:
+        app: openssl-tpm2
+      annotations:
+    spec:
+      containers:
+        - name: openssl-tpm2
+          image: quay.io/dfroehli/openssl_tpm2
+          volumeMounts:
+            - name: tls-secrets-vol
+              mountPath: "/home"
+              readOnly: true
+          ports:
+            - containerPort: 8443
+              protocol: TCP
+          securityContext:
+            privileged: true
+      serviceAccountName: "privileged-tpmaccess"
+      nodeSelector:
+        tpm2: present
+      volumes:
+        - name: tls-secrets-vol
+          secret:
+            secretName: tls-tpm2
