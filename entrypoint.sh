@@ -37,5 +37,6 @@ fi
 if [[ ( $1 == "serve") ]]
 then
   echo "Starting openssl server using cert with key in tpm on port 8443"
-  OPENSSL_CONF=openssl_tpm2.cnf openssl s_server -cert tls.crt -www -accept 8443 -keyform engine -engine tpm2 -key tls.key
+  cd /home
+  OPENSSL_CONF=openssl_tpm2.cnf openssl s_server -cert certs/tls.crt -www -accept 8443 -keyform engine -engine tpm2 -key certs/tls.key
 fi

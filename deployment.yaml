@@ -19,7 +19,7 @@ spec:
           image: quay.io/dfroehli/openssl_tpm2
           volumeMounts:
             - name: tls-secrets-vol
-              mountPath: "/home"
+              mountPath: "/home/certs"
               readOnly: true
           ports:
             - containerPort: 8443
