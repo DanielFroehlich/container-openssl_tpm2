@@ -1,9 +1,13 @@
 Container Image with openssl and IBM TSS TPM2 engine and tools to demo how to store mTLS keys in tpm device at the edge.
+
 The key is stored on the host node via a K8S hostPath volumeMount.
+
 The container checks if the key/cert is available. if yes, openssl is started in server mode.
-If the key/cert is not yet there, the container waits for its creation.
-To create it, oc rsh / termin into the pod and exeute /home/provsion.sh script. See that script.
+
+If the key/cert is not yet there, the container waits for its creation. To create it, oc rsh / termin into the pod and exeute /home/provsion.sh script. See that script.
+
 The deployment.yaml uses a node selector for a node label "tpm=present", make sure to label your nodes accordingly!
+
 The deployment.yaml uses a pod anti affinity to push several pods across different nodes if available.
 A readinessProbe is also configured to ensure only pods with avail keys are getting requests.
 
