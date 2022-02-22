@@ -2,15 +2,14 @@ Container Image with openssl and IBM TSS TPM2 engine and tools to demo how to st
 
 The key is stored on the host node via a K8S hostPath volumeMount.
 
-The container checks if the key/cert is available. if yes, openssl is started in server mode.
+The container checks if the key/cert is available. if yes, openssl is started in server mode. 
 
-If the key/cert is not yet there, the container waits for its creation. To create it, oc rsh / termin into the pod and exeute /home/provsion.sh script. See that script.
+If the key/cert is not yet there, the container waits for its creation. To create it, oc rsh / console terminal into the pod and exeute /home/provision.sh script. See that script for the black magic to create a key in tpm module.
 
 The deployment.yaml uses a node selector for a node label "tpm=present", make sure to label your nodes accordingly!
 
 The deployment.yaml uses a pod anti affinity to push several pods across different nodes if available.
 A readinessProbe is also configured to ensure only pods with avail keys are getting requests.
-
 
 For IBM TSS TPM2 see:
 https://git.kernel.org/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine.git/about/
