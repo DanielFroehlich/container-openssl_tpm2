@@ -1,0 +1,29 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: openssl-server
+spec:
+  ports:
+    - name: openssl-server
+      protocol: TCP
+      port: 8443
+      targetPort: 8443
+  selector:
+    app: openssl-tpm2
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: openssl-server
+  annotations:
+    haproxy.router.openshift.io/balance: roundrobin
+spec:
+  to:
+    kind: Service
+    name: openssl-server
+    weight: 100
+  port:
+    targetPort: openssl-server
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect

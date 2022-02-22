@@ -4,7 +4,7 @@ metadata:
   annotations:
   name: openssl-tpm2
 spec:
-  replicas: 0
+  replicas: 2
   selector:
     matchLabels:
       app: openssl-tpm2
@@ -14,22 +14,48 @@ spec:
         app: openssl-tpm2
       annotations:
     spec:
+      affinity:
+       podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 10
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - openssl-tpm2
+                topologyKey: kubernetes.io/hostname
       containers:
         - name: openssl-tpm2
           image: quay.io/dfroehli/openssl_tpm2
+          securityContext:
+            privileged: true
           volumeMounts:
-            - name: tls-secrets-vol
-              mountPath: "/home/certs"
-              readOnly: true
+            - name: host-tls-certs
+              mountPath: /host/certs
           ports:
             - containerPort: 8443
               protocol: TCP
-          securityContext:
-            privileged: true
+          readinessProbe:
+            tcpSocket:
+              port: 8443
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 180
+          env:
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+
       serviceAccountName: "privileged-tpmaccess"
       nodeSelector:
         tpm2: present
       volumes:
-        - name: tls-secrets-vol
-          secret:
-            secretName: tls-tpm2
+       - name: host-tls-certs
+         hostPath:
+           path: /etc/pki/tls/edgeTPM
+           type: 'DirectoryOrCreate'
